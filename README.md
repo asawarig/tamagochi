@@ -8,6 +8,19 @@ A Chrome extension with a virtual pet that you keep alive by taking care of **yo
 | 🧍 **Movement** | Stand up and stretch |
 | 👀 **Eye rest** | Look ~20 ft (6 m) away for 20 seconds (the 20-20-20 rule) |
 
+## Your pet follows you around the web 🐾
+
+Pixel Pal lives on every web page you visit, like a little desktop pet:
+
+- It **wanders along the bottom of the page** when it's happy, slows down when it's needy, and naps (z z) when you step away.
+- When it needs something, a **speech bubble** pops up ("I'm thirsty! 💧").
+- **Click it** to open a care card with its stats and Drink / Stand up / Look away buttons. During an eye break the countdown shows above its head.
+- **Drag it** anywhere. Let go and it falls back down ("Whee!").
+- It never gets in your way: only the pet itself catches the mouse, it hides when a video goes fullscreen, and its styles are isolated from the page.
+- Don't want it somewhere? Use **Hide on this site** or **Hide everywhere** on the card. You can bring it back from the popup's settings.
+
+> Chrome extensions can only draw inside browser tabs. The pet can't appear over other apps or on Chrome's own pages (`chrome://…`, the Chrome Web Store).
+
 ## How it works
 
 - **Hatching:** your pet starts as an egg. Your first healthy action hatches it.
@@ -31,11 +44,12 @@ Default reminder intervals: water every 45 min, stand up every 45 min, eyes ever
 ## Project layout
 
 ```
-manifest.json        MV3 manifest (permissions: storage, alarms, notifications, idle)
+manifest.json        MV3 manifest (permissions: storage, alarms, notifications, idle, scripting; all sites for the on-page pet)
 src/state.js         Game rules: decay, health, XP/stages, actions (pure, unit-tested)
 src/sprite.js        Procedural 16×16 pixel-art pet (shared by popup, toolbar icon, icon generator)
 src/background.js    Service worker: 1-minute tick, idle detection, notifications, toolbar icon
 popup/               The handheld-style popup UI
+content/             The on-page pet that roams the bottom of every page
 tools/make-icons.mjs Regenerates icons/*.png from the sprite (npm run icons)
 test/                Node unit tests (npm test)
 ```

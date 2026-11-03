@@ -132,9 +132,21 @@ function ensureAlarm() {
 
 // ---------- Listeners (registered synchronously at top level) ----------
 
+// Content scripts only run on pages loaded after install, so add the pet to
+// tabs that are already open.
+async function injectIntoOpenTabs() {
+  const tabs = await chrome.tabs.query({ url: ['http://*/*', 'https://*/*'] });
+  for (const tab of tabs) {
+    chrome.scripting
+      .executeScript({ target: { tabId: tab.id }, files: ['content/loader.js'] })
+      .catch(() => {}); // e.g. the Chrome Web Store, which extensions can't touch
+  }
+}
+
 chrome.runtime.onInstalled.addListener(() => {
   ensureAlarm();
   withState(() => {});
+  injectIntoOpenTabs();
 });
 chrome.runtime.onStartup.addListener(() => {
   ensureAlarm();
@@ -178,6 +190,8 @@ const ACTIONS = {
   clearMessage: (s) => { s.message = null; },
   rebirth: (s) => Game.rebirth(s),
   updateSettings: (s, msg) => Game.updateSettings(s, msg.settings),
+  hideSite: (s, msg) => Game.hideOnSite(s, msg.host),
+  showAllSites: (s) => Game.updateSettings(s, { hiddenSites: [], showOnPages: true }),
   resetEverything: (s) => {
     const fresh = Game.createState(Date.now(), s.settings);
     for (const k of Object.keys(s)) delete s[k];

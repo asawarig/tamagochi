@@ -95,3 +95,24 @@ test('paused care freezes stats', () => {
   run(s, 60);
   assert.equal(s.stats.eyes, 100);
 });
+
+test('on-page pet can be hidden per site or everywhere', () => {
+  const s = S.createState(T0);
+  assert.equal(S.showsOn(s, 'example.com'), true);
+  S.hideOnSite(s, 'example.com');
+  S.hideOnSite(s, 'example.com');
+  assert.deepEqual(s.settings.hiddenSites, ['example.com']);
+  assert.equal(S.showsOn(s, 'example.com'), false);
+  assert.equal(S.showsOn(s, 'other.org'), true);
+  S.updateSettings(s, { showOnPages: false });
+  assert.equal(S.showsOn(s, 'other.org'), false);
+  assert.deepEqual(s.settings.hiddenSites, ['example.com']);
+});
+
+test('older saved states pick up the new on-page settings', () => {
+  const old = S.createState(T0);
+  delete old.settings.showOnPages;
+  delete old.settings.hiddenSites;
+  const s = S.migrate(old, T0);
+  assert.equal(S.showsOn(s, 'example.com'), true);
+});

@@ -161,8 +161,17 @@ function openSettings() {
     if (input.type === 'checkbox') input.checked = !!v;
     else input.value = v;
   }
+  const hidden = state.settings.hiddenSites.length;
+  $('showAllSites').hidden = !hidden;
+  $('showAllSites').textContent = `Show my pet again on ${hidden} hidden site${hidden === 1 ? '' : 's'}`;
   $('settings').hidden = false;
 }
+
+$('showAllSites').addEventListener('click', async () => {
+  await send('showAllSites');
+  $('showAllSites').hidden = true;
+  $('settingsForm').elements.showOnPages.checked = true;
+});
 
 $('settingsForm').addEventListener('submit', async (e) => {
   e.preventDefault();

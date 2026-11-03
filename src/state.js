@@ -10,6 +10,7 @@ export const STATS = {
     setting: 'hydrationMinutes',
     low: 'is getting thirsty. Time for a glass of water!',
     urgent: 'is parched! Please drink some water.',
+    short: "I'm thirsty! 💧",
   },
   movement: {
     label: 'Movement',
@@ -17,6 +18,7 @@ export const STATS = {
     setting: 'movementMinutes',
     low: 'is getting stiff. Stand up and stretch for a minute!',
     urgent: "hasn't moved in ages! Stand up and walk around.",
+    short: "Let's stretch! 🧍",
   },
   eyes: {
     label: 'Eye rest',
@@ -24,6 +26,7 @@ export const STATS = {
     setting: 'eyesMinutes',
     low: 'has tired eyes. Look at something far away for 20 seconds.',
     urgent: 'can barely see straight! Give your eyes a 20 second break.',
+    short: 'My eyes are tired 👀',
   },
 };
 
@@ -36,6 +39,8 @@ export const DEFAULT_SETTINGS = {
   notifications: true,
   autoDetect: true,
   paused: false,
+  showOnPages: true, // the pet roams on top of web pages
+  hiddenSites: [], // hostnames where the on-page pet is hidden
 };
 
 export const EYE_BREAK_SECONDS = 20;
@@ -67,8 +72,14 @@ export function newPet(now, name, generation = 1) {
   return { name, bornAt: now, hatchedAt: null, xp: 0, alive: true, diedAt: null, generation };
 }
 
-export function createState(now = Date.now(), settings = {}) {
+const withDefaults = (settings = {}) => {
   const s = { ...DEFAULT_SETTINGS, ...settings };
+  s.hiddenSites = Array.isArray(s.hiddenSites) ? [...s.hiddenSites] : [];
+  return s;
+};
+
+export function createState(now = Date.now(), settings = {}) {
+  const s = withDefaults(settings);
   return {
     version: 1,
     settings: s,
@@ -93,7 +104,7 @@ export function createState(now = Date.now(), settings = {}) {
 export function migrate(saved, now = Date.now()) {
   if (!saved || saved.version !== 1) return createState(now);
   const fresh = createState(now, saved.settings);
-  return { ...fresh, ...saved, settings: { ...DEFAULT_SETTINGS, ...saved.settings } };
+  return { ...fresh, ...saved, settings: withDefaults(saved.settings) };
 }
 
 // ---------- Derived values ----------
@@ -350,8 +361,22 @@ export function updateSettings(state, patch) {
     next[k] = clamp(Math.round(Number(next[k]) || DEFAULT_SETTINGS[k]), 5, 240);
   }
   next.waterGoal = clamp(Math.round(Number(next.waterGoal) || DEFAULT_SETTINGS.waterGoal), 1, 20);
+  next.showOnPages = next.showOnPages !== false;
+  next.hiddenSites = Array.isArray(next.hiddenSites) ? [...new Set(next.hiddenSites.map(String))].slice(0, 200) : [];
   next.petName = String(next.petName || '').trim().slice(0, 16) || DEFAULT_SETTINGS.petName;
   state.settings = next;
   state.pet.name = next.petName;
   return state;
+}
+
+export function hideOnSite(state, host) {
+  if (host && !state.settings.hiddenSites.includes(host)) {
+    state.settings.hiddenSites = [...state.settings.hiddenSites, host];
+  }
+  return state;
+}
+
+/** Whether the on-page pet should be shown on a given hostname. */
+export function showsOn(state, host) {
+  return state.settings.showOnPages !== false && !state.settings.hiddenSites.includes(host);
 }
