@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Pixel Pal</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <main class="device">
+    <header class="top">
+      <div>
+        <div class="name" id="petName">Pip</div>
+        <div class="stage" id="stage">Egg</div>
+      </div>
+      <button class="icon-btn" id="settingsBtn" title="Settings" aria-label="Settings">⚙︎</button>
+    </header>
+
+    <section class="screen" id="screen">
+      <p class="bubble" id="bubble" aria-live="polite"></p>
+      <canvas id="pet" width="160" height="160" aria-label="Your pet"></canvas>
+      <div class="zzz" id="zzz" hidden>z<span>z</span><span>z</span></div>
+      <div class="health" title="Health">
+        <span>♥</span>
+        <div class="bar"><i id="healthBar"></i></div>
+      </div>
+      <div class="xp" id="xpLine"></div>
+    </section>
+
+    <section class="stats" id="stats"></section>
+
+    <section class="actions">
+      <button class="act" data-action="drink"><span class="emoji">💧</span>Drink</button>
+      <button class="act" data-action="stand"><span class="emoji">🧍</span>Stand up</button>
+      <button class="act" data-action="look"><span class="emoji">👀</span>Look away</button>
+    </section>
+
+    <footer class="today" id="today"></footer>
+
+    <!-- Eye break overlay -->
+    <section class="overlay" id="eyeBreak" hidden>
+      <div class="ring"><span id="countdown">20</span></div>
+      <h2>Look away</h2>
+      <p>Focus on something about 20&nbsp;feet (6&nbsp;m) away. Blink slowly.</p>
+      <button class="ghost-btn" id="cancelEye">Cancel</button>
+    </section>
+
+    <!-- Death overlay -->
+    <section class="overlay dark" id="dead" hidden>
+      <h2 id="deadTitle">Goodbye…</h2>
+      <p id="deadText"></p>
+      <button class="primary" id="rebirthBtn">Hatch a new egg</button>
+    </section>
+
+    <!-- Settings -->
+    <section class="overlay settings" id="settings" hidden>
+      <h2>Settings</h2>
+      <form id="settingsForm">
+        <label>Pet name <input name="petName" maxlength="16"></label>
+        <fieldset>
+          <legend>Remind me every… (minutes)</legend>
+          <label>💧 Drink water <input type="number" name="hydrationMinutes" min="5" max="240"></label>
+          <label>🧍 Stand up <input type="number" name="movementMinutes" min="5" max="240"></label>
+          <label>👀 Rest eyes <input type="number" name="eyesMinutes" min="5" max="240"></label>
+        </fieldset>
+        <label>Daily water goal (glasses) <input type="number" name="waterGoal" min="1" max="20"></label>
+        <label class="check"><input type="checkbox" name="notifications"> Desktop notifications</label>
+        <label class="check"><input type="checkbox" name="autoDetect"> Count time away from the computer as a break</label>
+        <label class="check"><input type="checkbox" name="paused"> Pause care (meetings, vacation)</label>
+        <div class="row">
+          <button type="button" class="ghost-btn" id="closeSettings">Cancel</button>
+          <button type="submit" class="primary">Save</button>
+        </div>
+        <button type="button" class="link danger" id="resetBtn">Start over with a new egg</button>
+      </form>
+    </section>
+  </main>
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

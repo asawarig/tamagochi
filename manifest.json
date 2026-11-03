@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "Pixel Pal – Healthy Habits Pet",
+  "short_name": "Pixel Pal",
+  "version": "1.0.0",
+  "description": "A virtual pet that stays healthy when you do: drink water, stand up and rest your eyes to keep it alive.",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_title": "Pixel Pal",
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png"
+    }
+  },
+  "background": {
+    "service_worker": "src/background.js",
+    "type": "module"
+  },
+  "permissions": ["storage", "alarms", "notifications", "idle"]
+}
